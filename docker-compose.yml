@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ['--config=/etc/otel-collector-config.yaml']
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - '4318:4318' # OTLP HTTP receiver
+      - '55681:55681' # OTLP gRPC (optional)
+      - '8888:8888' # Collector metrics
+    depends_on:
+      - jaeger
+
+  app:
+    image: node:lts-alpine3.21
+    command: yarn start:dev
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - '3000:3000'
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '16686:16686' # Jaeger UI
+      - '4317:4317' # Jaeger gRPC endpoint
+      - '14250:14250'
+      - '14268:14268'
+      - '9411:9411'
