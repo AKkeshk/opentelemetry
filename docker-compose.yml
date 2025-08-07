@@ -10,17 +10,16 @@ services:
       - '4318:4318' # OTLP HTTP receiver
       - '55681:55681' # OTLP gRPC (optional)
       - '8888:8888' # Collector metrics
-    depends_on:
-      - jaeger
+    # depends_on:
+      # - jaeger
 
   app:
-    image: node:lts-alpine3.21
-    command: yarn start:dev
-    volumes:
-      - .:/app
+    build: .
     working_dir: /app
     ports:
       - '3000:3000'
+    depends_on:
+      - otel-collector
 
   jaeger:
     image: jaegertracing/all-in-one:latest
