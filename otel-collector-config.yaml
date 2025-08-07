@@ -2,11 +2,12 @@ receivers:
   otlp:
     protocols:
       http: # This enables OTLP over HTTP (default port: 4318)
+        endpoint: ${env:MY_POD_IP}:4318
 
 exporters:
   debug: {}
   otlp:
-    endpoint: jaeger:14250
+    endpoint: jaeger:4317
     tls:
       insecure: true
 
